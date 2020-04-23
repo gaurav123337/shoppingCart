@@ -1,33 +1,23 @@
 import React, {
   Component
-} from 'react';
+} from "react";
 
 import {
   connect
-} from 'react-redux';
-import CheckOutInfo from '../CheckOutinfo';
-import EditModal from '../EditModal';
+} from "react-redux";
+import CheckOutInfo from "../CheckOutinfo";
+import EditModal from "../EditModal";
 
-import {removeItem, refresh} from '../../actions';
+import {removeItem, refresh} from "../../actions";
 
 class CartList extends Component {
   constructor(props){
     super(props);
     this.state = {
       isOpen: false,
-      itemInfo:''
+      itemInfo:""
     }
   }
-
-  // getQty = (ev) => {
-  //   console.log(ev.target.value, 'numeric');
-  //   this.setState({
-  //     id: ev.target.id,
-  //     qty :ev.target.value
-  //   }, () => {
-  //     console.log(this.state, 'state')
-  //   })
-  // }
 
   openModal = (item) => {
     this.setState({
@@ -55,6 +45,7 @@ class CartList extends Component {
     } = this.props;
 
     const {itemInfo, isOpen} = this.state;
+
 
     return (
       <>
@@ -103,7 +94,7 @@ class CartList extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, 'state in list');
+  console.log(state, "state in list");
   return {
     itemList: state.getItemList
   }

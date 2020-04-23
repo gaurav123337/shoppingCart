@@ -1,37 +1,32 @@
 import React, {
   Component
-} from 'react';
+} from "react";
 import {
   connect
-} from 'react-redux';
+} from "react-redux";
 
 import Modal from "react-bootstrap/Modal";
-import ModalBody from "react-bootstrap/ModalBody";
-import ModalHeader from "react-bootstrap/ModalHeader";
-import ModalFooter from "react-bootstrap/ModalFooter";
-import ModalTitle from "react-bootstrap/ModalTitle";
 
-import {removeItem} from '../../actions';
+
+import {removeItem, updateList} from "../../actions";
 
 class EditModal extends Component {
   constructor(props){
     super(props);
     this.state ={
       isOpen: false,
-      color: '',
-      size:'',
+      color: "",
+      size:"",
       qty: 1
     }
   }
-  // showModal = () => {
-  //   this.setState ({
-  //     isOpen: true
-  //   })
-  // };
 
   hideModal = () => {
     this.setState ({
-      isOpen: false
+      isOpen: false,
+      color: "",
+      size:"",
+      qty: 1
     }, () => {
       this.props.onCloseClick(this.state.isOpen);
     });
@@ -42,7 +37,6 @@ class EditModal extends Component {
   }
 
   getColor = (color) => {
-    console.log(color, 'ev')
     this.setState({
       color
     });
@@ -56,10 +50,20 @@ class EditModal extends Component {
     })
   }
 
+  updatePrice = (itemInfo) => {
+
+      itemInfo.p_price = this.state.qty * itemInfo.p_price;
+      itemInfo.p_quantity = this.state.qty;
+      itemInfo.selectedColor = this.state.color;
+
+      this.props.updateList(itemInfo);
+
+    this.hideModal();
+  }
+
   render() {
     const { status, myItem } = this.props;
     const { color, size, qty } = this.state;
-
 
     return (
      <Modal show={status} >
@@ -74,8 +78,8 @@ class EditModal extends Component {
             {
               myItem.p_available_options.colors.length > 0 && (
                 myItem.p_available_options.colors.map((color, index) => {
-                  return (<div className="float-left"
-                    style={{ background: color.hexcode, height: '20px', width: '20px' }}
+                  return (<div className="float-left" key={index}
+                    style={{ background: color.hexcode, height: "20px", width: "20px" }}
                     data-color={color.name} onClick={()=>this.getColor(color)}></div>)
                 })
               )
@@ -94,14 +98,14 @@ class EditModal extends Component {
             </select>
           </div>
           <div>
-            <input type="number" defaultValue={ this.state.qty || 1 } onKeyUp={this.getQty} min="1"/>
+            <input type="number" defaultValue={ this.state.qty || 1 } onKeyUp={this.getQty} min="1" id={myItem.p_id}/>
           </div>
         </section>
         <section>
           <img src={myItem.p_image} alt={myItem.p_image}/>
         </section>
         <section>
-          <button type="button" className="btn btn-primary">EDIT</button>
+          <button type="button" className="btn btn-primary" onClick={() => this.updatePrice(myItem, qty, color)}>EDIT</button>
         </section>
       </Modal.Body>
       <Modal.Body>
@@ -113,7 +117,6 @@ class EditModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, 'state in list');
   return {
     itemList: state.getItemList
   }
@@ -121,7 +124,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    removeItem :item => dispatch(removeItem(item))
+    removeItem :item => dispatch(removeItem(item)),
+    updateList : item => dispatch(updateList(item))
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(EditModal);
